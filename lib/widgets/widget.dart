@@ -14,7 +14,10 @@ Widget brandName() {
       ),
       Text(
         'Unsplash',
-        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Colors.black87,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     ],
   );
@@ -31,31 +34,35 @@ Widget mainPhotosList(List<MainPhotosModel> popularPhotos, context) {
       mainAxisSpacing: 6.0,
       crossAxisSpacing: 6.0,
       children: popularPhotos
-          .map((popularPhoto) => GridTile(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ImageView(
-                                  imgUrl: popularPhoto.urls.regular,
-                                  imgAuthor: popularPhoto.user.name,
-                                )));
-                  },
-                  child: Hero(
-                    tag: popularPhoto.urls.regular,
-                    child: Container(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image(
-                          image: NetworkImage(popularPhoto.urls.regular),
-                          fit: BoxFit.cover,
-                        ),
+          .map(
+            (popularPhoto) => GridTile(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ImageView(
+                        imgUrl: popularPhoto.urls.regular,
+                        imgAuthor: popularPhoto.user.name,
+                      ),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: popularPhoto.urls.regular,
+                  child: Container(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image(
+                        image: NetworkImage(popularPhoto.urls.regular),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
     ),
   );

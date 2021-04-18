@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unsplash_final_project/models/mainPhotos_model.dart';
+import 'package:unsplash_final_project/services/photo.dart';
 import 'package:unsplash_final_project/widgets/widget.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:loading_animations/loading_animations.dart';
 
 class Category extends StatefulWidget {
@@ -13,25 +12,22 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
+  Photo photo = Photo();
+
   List<MainPhotosModel> photosByCategory = [];
   var loading = false;
 
-  getPhotosByCategory(String category) async {
+  getPhotosByCategory(String categoryName) async {
     setState(() {
       loading = true;
     });
-    final responseData = await http.get("https://api.unsplash.com/topics/" +
-        category +
-        "/photos?per_page=20&client_id=jLFnRsQ2GjVdKeacMPBjycuBhuqYqyZStxxWH8TccGE");
-    if (responseData.statusCode == 200) {
-      final data = jsonDecode(responseData.body);
-      setState(() {
-        for (Map i in data) {
-          photosByCategory.add(MainPhotosModel.fromJson(i));
-        }
-        loading = false;
-      });
-    }
+    var data = await photo.getPhotosByCategory(categoryName);
+    setState(() {
+      for (Map i in data) {
+        photosByCategory.add(MainPhotosModel.fromJson(i));
+      }
+      loading = false;
+    });
   }
 
   @override
@@ -62,7 +58,9 @@ class _CategoryState extends State<Category> {
                       ),
                     )
                   // ? Center(child: CircularProgressIndicator())
-                  : Expanded(child: mainPhotosList(photosByCategory, context)),
+                  : Expanded(
+                      child: mainPhotosList(photosByCategory, context),
+                    ),
             ),
           ],
         ),

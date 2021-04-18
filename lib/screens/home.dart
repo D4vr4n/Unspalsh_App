@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:loading_animations/loading_animations.dart';
 
 import 'package:unsplash_final_project/models/category_model.dart';
 import 'package:unsplash_final_project/models/mainPhotos_model.dart';
 import 'package:unsplash_final_project/screens/search.dart';
+import 'package:unsplash_final_project/services/photo.dart';
 import 'package:unsplash_final_project/widgets/widget.dart';
 
 import 'category.dart';
@@ -16,6 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Photo photo = Photo();
   List<CategoriesModel> categories = [];
   List<MainPhotosModel> popularPhotos = [];
   var loading = false;
@@ -26,34 +26,26 @@ class _HomeState extends State<Home> {
     setState(() {
       loading = true;
     });
-    final responseData = await http.get(
-        "https://api.unsplash.com/photos?per_page=20&client_id=jLFnRsQ2GjVdKeacMPBjycuBhuqYqyZStxxWH8TccGE");
-    if (responseData.statusCode == 200) {
-      final data = jsonDecode(responseData.body);
-      setState(() {
-        for (Map i in data) {
-          popularPhotos.add(MainPhotosModel.fromJson(i));
-        }
-        loading = false;
-      });
-    }
+    var data = await photo.getPopularPhotos();
+    setState(() {
+      for (Map i in data) {
+        popularPhotos.add(MainPhotosModel.fromJson(i));
+      }
+      loading = false;
+    });
   }
 
   getCategories() async {
     setState(() {
       catloading = true;
     });
-    final responseData = await http.get(
-        "https://api.unsplash.com/topics?client_id=jLFnRsQ2GjVdKeacMPBjycuBhuqYqyZStxxWH8TccGE");
-    if (responseData.statusCode == 200) {
-      final data = jsonDecode(responseData.body);
-      setState(() {
-        for (Map i in data) {
-          categories.add(CategoriesModel.fromJson(i));
-        }
-        catloading = false;
-      });
-    }
+    var data = await photo.getCategories();
+    setState(() {
+      for (Map i in data) {
+        categories.add(CategoriesModel.fromJson(i));
+      }
+      catloading = false;
+    });
   }
 
   @override
@@ -90,16 +82,21 @@ class _HomeState extends State<Home> {
                             border: InputBorder.none)),
                   ),
                   GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Search(
-                                      query: searchController.text,
-                                    )));
-                        FocusScope.of(context).unfocus();
-                      },
-                      child: Container(child: Icon(Icons.search)))
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Search(
+                            query: searchController.text,
+                          ),
+                        ),
+                      );
+                      FocusScope.of(context).unfocus();
+                    },
+                    child: Container(
+                      child: Icon(Icons.search),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -145,11 +142,13 @@ class CategoriesTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Category(
-                      categoryName: slug,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => Category(
+              categoryName: slug,
+            ),
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.only(right: 4),
@@ -164,20 +163,21 @@ class CategoriesTile extends StatelessWidget {
                   fit: BoxFit.cover,
                 )),
             Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.black26,
-                ),
-                alignment: Alignment.center,
-                height: 50,
-                width: 100,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15),
-                )),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.black26,
+              ),
+              alignment: Alignment.center,
+              height: 50,
+              width: 100,
+              child: Text(
+                title,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
+              ),
+            ),
           ],
         ),
       ),

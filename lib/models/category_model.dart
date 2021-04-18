@@ -2,9 +2,17 @@ import 'dart:convert';
 
 List<CategoriesModel> modelUserFromJson(String str) =>
     List<CategoriesModel>.from(
-        json.decode(str).map((x) => CategoriesModel.fromJson(x)));
-String modelUserToJson(List<CategoriesModel> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+      json.decode(str).map(
+            (x) => CategoriesModel.fromJson(x),
+          ),
+    );
+String modelUserToJson(List<CategoriesModel> data) => json.encode(
+      List<dynamic>.from(
+        data.map(
+          (x) => x.toJson(),
+        ),
+      ),
+    );
 
 class CategoriesModel {
   String title;

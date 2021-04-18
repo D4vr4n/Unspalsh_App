@@ -2,9 +2,17 @@ import 'dart:convert';
 
 List<MainPhotosModel> modelUserFromJson(String str) =>
     List<MainPhotosModel>.from(
-        json.decode(str).map((x) => MainPhotosModel.fromJson(x)));
-String modelUserToJson(List<MainPhotosModel> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+      json.decode(str).map(
+            (x) => MainPhotosModel.fromJson(x),
+          ),
+    );
+String modelUserToJson(List<MainPhotosModel> data) => json.encode(
+      List<dynamic>.from(
+        data.map(
+          (x) => x.toJson(),
+        ),
+      ),
+    );
 
 class MainPhotosModel {
   String id;
