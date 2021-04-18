@@ -23,10 +23,12 @@ Widget brandName() {
   );
 }
 
-Widget mainPhotosList(List<MainPhotosModel> popularPhotos, context) {
+Widget mainPhotosList(
+    List<MainPhotosModel> popularPhotos, context, ScrollController controller) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 16),
     child: GridView.count(
+      controller: controller,
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
       crossAxisCount: 2,

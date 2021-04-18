@@ -4,23 +4,30 @@ const apiKey = 'jLFnRsQ2GjVdKeacMPBjycuBhuqYqyZStxxWH8TccGE';
 const url = 'https://api.unsplash.com';
 
 class Photo {
-  getPopularPhotos() async {
+  getPopularPhotos(int pageNumber) async {
     NetworkHelper networkHelper =
-        NetworkHelper('$url/photos?client_id=$apiKey');
+        NetworkHelper('$url/photos?page=$pageNumber&client_id=$apiKey');
     var data = await networkHelper.getData();
     return data;
   }
 
-  getCategories() async {
+  getCategories(int pageNumber) async {
     NetworkHelper networkHelper =
-        NetworkHelper('$url/topics?client_id=$apiKey');
+        NetworkHelper('$url/topics?page=$pageNumber&client_id=$apiKey');
     var data = await networkHelper.getData();
     return data;
   }
 
-  getPhotosByCategory(String category) async {
-    NetworkHelper networkHelper =
-        NetworkHelper('$url/topics/$category/photos?client_id=$apiKey');
+  getPhotosByCategory(String category, int pageNumber) async {
+    NetworkHelper networkHelper = NetworkHelper(
+        '$url/topics/$category/photos?page=$pageNumber&client_id=$apiKey');
+    var data = await networkHelper.getData();
+    return data;
+  }
+
+  getSearchedPhotos(String query, int pageNumber) async {
+    NetworkHelper networkHelper = NetworkHelper(
+        '$url/search/photos?query=$query&page=$pageNumber&client_id=$apiKey');
     var data = await networkHelper.getData();
     return data;
   }

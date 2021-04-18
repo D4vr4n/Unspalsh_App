@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unsplash_final_project/models/mainPhotos_model.dart';
-import 'package:unsplash_final_project/screens/home.dart';
+import 'package:unsplash_final_project/services/photo.dart';
 import 'package:unsplash_final_project/widgets/widget.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:loading_animations/loading_animations.dart';
 
 class Search extends StatefulWidget {
@@ -14,32 +12,42 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+  int pageNumber = 1;
+  Photo photo = Photo();
+  ScrollController _scrollController = new ScrollController();
   TextEditingController searchController = new TextEditingController();
   List<MainPhotosModel> searchedPhotos = [];
-  var loading = false;
 
   getSearchedPhotos(String query) async {
+    var data = await photo.getSearchedPhotos(query, pageNumber);
     setState(() {
-      loading = true;
+      for (Map i in data["results"]) {
+        searchedPhotos.add(MainPhotosModel.fromJson(i));
+      }
     });
-    final responseData = await http.get(
-        "https://api.unsplash.com/search/photos?query=$query&per_page=20&client_id=jLFnRsQ2GjVdKeacMPBjycuBhuqYqyZStxxWH8TccGE");
-    if (responseData.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(responseData.body);
-      setState(() {
-        for (Map i in data["results"]) {
-          searchedPhotos.add(MainPhotosModel.fromJson(i));
-        }
-        loading = false;
-      });
-    }
   }
 
   @override
   void initState() {
     getSearchedPhotos(widget.query);
+    // Load next page when user scrolls to the bottom
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          pageNumber++;
+        });
+        getSearchedPhotos(widget.query);
+      }
+    });
     super.initState();
     searchController.text = widget.query;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -82,13 +90,13 @@ class _SearchState extends State<Search> {
             ),
             SizedBox(height: 16),
             Container(
-              child: loading
-                  ? Center(
-                      child: LoadingBouncingGrid.circle(
-                        backgroundColor: Colors.cyanAccent,
-                      ),
-                    )
-                  : Expanded(child: mainPhotosList(searchedPhotos, context)),
+              child: Expanded(
+                child: mainPhotosList(
+                  searchedPhotos,
+                  context,
+                  _scrollController,
+                ),
+              ),
             ),
           ],
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:unsplash_final_project/models/mainPhotos_model.dart';
 import 'package:unsplash_final_project/services/photo.dart';
 import 'package:unsplash_final_project/widgets/widget.dart';
-import 'package:loading_animations/loading_animations.dart';
 
 class Category extends StatefulWidget {
   final String categoryName;
@@ -12,8 +11,9 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
+  int pageNumber = 1;
   Photo photo = Photo();
-
+  ScrollController _scrollController = new ScrollController();
   List<MainPhotosModel> photosByCategory = [];
   var loading = false;
 
@@ -21,7 +21,7 @@ class _CategoryState extends State<Category> {
     setState(() {
       loading = true;
     });
-    var data = await photo.getPhotosByCategory(categoryName);
+    var data = await photo.getPhotosByCategory(categoryName, pageNumber);
     setState(() {
       for (Map i in data) {
         photosByCategory.add(MainPhotosModel.fromJson(i));
@@ -33,7 +33,23 @@ class _CategoryState extends State<Category> {
   @override
   void initState() {
     getPhotosByCategory(widget.categoryName);
+    // Load next page when user scrolls to the bottom
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        setState(() {
+          pageNumber++;
+        });
+        getPhotosByCategory(widget.categoryName);
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,16 +67,10 @@ class _CategoryState extends State<Category> {
           children: [
             SizedBox(height: 16),
             Container(
-              child: loading
-                  ? Center(
-                      child: LoadingBouncingGrid.circle(
-                        backgroundColor: Colors.cyanAccent,
-                      ),
-                    )
-                  // ? Center(child: CircularProgressIndicator())
-                  : Expanded(
-                      child: mainPhotosList(photosByCategory, context),
-                    ),
+              child: Expanded(
+                child: mainPhotosList(
+                    photosByCategory, context, _scrollController),
+              ),
             ),
           ],
         ),
