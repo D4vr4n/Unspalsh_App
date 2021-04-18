@@ -1,16 +1,34 @@
-# unsplash_final_project
+# unsplash_app
 
-A new Flutter project.
+App built using Unspalsh API.
 
-## Getting Started
+# Screenshots and description
 
-This project is a starting point for a Flutter application.
+## First Screen
 
-A few resources to get you started if this is your first Flutter project:
+1. AppBar with BrandName and it's logo on the center
+2. Searchbar (textField and search icon) that searches photos by entered query
+3. Horizotal Listview that contains all categories devided in API(Widgets that contains cover photo behind and category slug)
+4. Main Screen(GridView) that shows last uploaded pictures
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+<img src="https://github.com/D4vr4n/Unspalsh_App/blob/main/images/1.png" width="180" height="400" />
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Search Screen
+
+1. Shows only GridView with searched(query) photos
+
+<img src="https://github.com/D4vr4n/Unspalsh_App/blob/main/images/3.png" width="180" height="400" />
+
+## Category Screen
+
+1. Shows photos related to selected Category(GridView)
+
+<img src="https://github.com/D4vr4n/Unspalsh_App/blob/main/images/2.png" width="180" height="400" />
+
+## Photo Screen
+
+1. Photo that covers whole screen of the user
+2. On the bottom located two elements(Authors name, download icon(to save image to Photos))
+
+<img src="https://github.com/D4vr4n/Unspalsh_App/blob/main/images/4.png" width="180" height="400" />
+
