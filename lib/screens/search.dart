@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:unsplash_final_project/models/mainPhotos_model.dart';
 import 'package:unsplash_final_project/services/photo.dart';
 import 'package:unsplash_final_project/widgets/widget.dart';
-import 'package:loading_animations/loading_animations.dart';
 
 class Search extends StatefulWidget {
   final String query;
@@ -24,6 +23,14 @@ class _SearchState extends State<Search> {
       for (Map i in data["results"]) {
         searchedPhotos.add(MainPhotosModel.fromJson(i));
       }
+    });
+  }
+
+  Future<void> _updateData() async {
+    setState(() {
+      pageNumber = 1;
+      searchedPhotos.clear();
+      getSearchedPhotos(widget.query);
     });
   }
 
@@ -91,10 +98,13 @@ class _SearchState extends State<Search> {
             SizedBox(height: 16),
             Container(
               child: Expanded(
-                child: mainPhotosList(
-                  searchedPhotos,
-                  context,
-                  _scrollController,
+                child: RefreshIndicator(
+                  child: mainPhotosList(
+                    searchedPhotos,
+                    context,
+                    _scrollController,
+                  ),
+                  onRefresh: _updateData,
                 ),
               ),
             ),

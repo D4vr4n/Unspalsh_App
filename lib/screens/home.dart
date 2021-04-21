@@ -40,6 +40,14 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> _updateData() async {
+    setState(() {
+      pageNumber = 1;
+      popularPhotos.clear();
+      getPopularPhotos();
+    });
+  }
+
   @override
   void initState() {
     getCategories();
@@ -139,10 +147,13 @@ class _HomeState extends State<Home> {
             ),
             Container(
               child: Expanded(
-                child: mainPhotosList(
-                  popularPhotos,
-                  context,
-                  _scrollController,
+                child: RefreshIndicator(
+                  child: mainPhotosList(
+                    popularPhotos,
+                    context,
+                    _scrollController,
+                  ),
+                  onRefresh: _updateData,
                 ),
               ),
             ),

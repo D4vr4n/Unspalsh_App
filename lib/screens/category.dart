@@ -30,6 +30,14 @@ class _CategoryState extends State<Category> {
     });
   }
 
+  Future<void> _updateData() async {
+    setState(() {
+      pageNumber = 1;
+      photosByCategory.clear();
+      getPhotosByCategory(widget.categoryName);
+    });
+  }
+
   @override
   void initState() {
     getPhotosByCategory(widget.categoryName);
@@ -68,8 +76,14 @@ class _CategoryState extends State<Category> {
             SizedBox(height: 16),
             Container(
               child: Expanded(
-                child: mainPhotosList(
-                    photosByCategory, context, _scrollController),
+                child: RefreshIndicator(
+                  child: mainPhotosList(
+                    photosByCategory,
+                    context,
+                    _scrollController,
+                  ),
+                  onRefresh: _updateData,
+                ),
               ),
             ),
           ],
